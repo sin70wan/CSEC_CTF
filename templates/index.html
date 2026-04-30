@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF | Forensics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #030603;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .terminal {
+            background: #0a100a;
+            border: 1px solid #1f4f1f;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.06);
+        }
+
+        .terminal-bar {
+            background: #071007;
+            padding: 12px 18px;
+            border-bottom: 1px solid #1f4f1f;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #4a2a2a; }
+        .dot-yellow { background: #4a4a2a; }
+        .dot-green { background: #1fbf1f; animation: blink 1s infinite; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .terminal-title {
+            color: #3a8f3a;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        .content {
+            padding: 28px 24px;
+        }
+
+        h1 {
+            color: #2eff2e;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+        }
+
+        .case {
+            color: #8bc48b;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        /* Download box - fixed */
+        .download-box {
+            background: #0a1a0a;
+            border: 1px solid #2f6f2f;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .file-icon {
+            font-size: 42px;
+            margin-bottom: 8px;
+        }
+
+        .file-name {
+            color: #5fdf5f;
+            font-size: 15px;
+            font-weight: bold;
+            background: #0a1a0a;
+            padding: 6px 18px;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 10px 0;
+            border: 1px solid #2f8f2f;
+        }
+
+        .file-hint {
+            color: #4a8f4a;
+            font-size: 10px;
+            margin-bottom: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: transparent;
+            border: 1.5px solid #2eff2e;
+            color: #2eff2e;
+            padding: 8px 32px;
+            text-decoration: none;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 40px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #2eff2e;
+            color: #0a100a;
+        }
+
+        /* Submit area */
+        .submit-area {
+            background: #071007;
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid #1f3f1f;
+        }
+
+        .submit-label {
+            color: #5fbf5f;
+            font-size: 11px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input {
+            flex: 1;
+            background: #0a100a;
+            border: 1px solid #2f6f2f;
+            padding: 10px 14px;
+            color: #2eff2e;
+            font-family: monospace;
+            font-size: 13px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #4eff4e;
+        }
+
+        button {
+            background: transparent;
+            border: 1px solid #2eff2e;
+            color: #2eff2e;
+            padding: 10px 22px;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2eff2e;
+            color: #0a100a;
+        }
+
+        .result {
+            margin-top: 14px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .success {
+            background: #0a2a0a;
+            color: #5eff5e;
+            border-left: 3px solid #5eff5e;
+            display: block;
+        }
+
+        .error {
+            background: #2a0a0a;
+            color: #ff7a7a;
+            border-left: 3px solid #ff7a7a;
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 12px;
+            font-size: 9px;
+            color: #2a6f2a;
+            border-top: 1px solid #1f3f1f;
+            background: #071007;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="terminal-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <div class="terminal-title">ctf@forensics:~</div>
+        </div>
+
+        <div class="content">
+            <h1>> SILENT_FRAME</h1>
+
+            <div class="case">
+                Something isn't right about this file.
+            </div>
+
+            <div class="download-box">
+                
+                <div class="file-name">file.txt</div>
+                
+                <a href="/download" class="btn">⬇ DOWNLOAD</a>
+            </div>
+
+            <div class="submit-area">
+                <div class="submit-label">> SUBMIT FLAG</div>
+                <div class="input-group">
+                    <input type="text" id="flagInput" placeholder="CSEC{...}" autocomplete="off">
+                    <button id="submitBtn">VERIFY</button>
+                </div>
+                <div id="resultMsg" class="result"></div>
+            </div>
+        </div>
+
+       
+    </div>
+
+    <script>
+        const submitBtn = document.getElementById('submitBtn');
+        const flagInput = document.getElementById('flagInput');
+        const resultDiv = document.getElementById('resultMsg');
+
+        submitBtn.onclick = async function() {
+            const flag = flagInput.value.trim();
+            
+            const response = await fetch('/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ flag: flag })
+            });
+            
+            const data = await response.json();
+            
+            if (data.correct) {
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = '✅ ' + data.message;
+            } else {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = '❌ ' + data.message;
+            }
+        };
+
+        flagInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitBtn.click();
+        });
+    </script>
+</body>
+</html>
